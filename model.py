@@ -12,6 +12,9 @@ class Rokovnik:
         self.predmeti.append(predmet)
         return predmet
 
+    def odstrani_predmet(self, predmet):
+        self.predmeti.remove(predmet)
+
 
 class Predmet:
     def __init__(self, ime, pricakovana_ocena, tezavnost):
@@ -22,19 +25,26 @@ class Predmet:
         self.izpiti_po_datumih = {}
 
     def dodaj_izpit(self, datum, dolzina_izpita, tematika, kolicina_gradiva):
-        if not self.preveri_datum(datum):
+        if not self.preveri_datum(datum, dolzina_izpita):
             raise ValueError('Ob tem času imate že zabeležen nek izpit!')
         izpit = Izpit(datum, dolzina_izpita, tematika, kolicina_gradiva)
         self.izpiti.append(izpit)
         dan = izpit.datum.strftime("%x")
         self.izpiti_po_datumih[dan] = self.izpiti_po_datumih.get(dan, []) + [izpit]
 
-    def preveri_datum(self, datum):
+    def odstrani_izpit(self, izpit):
+        dan = izpit.datum.strftime("%x")
+        self.izpiti_po_datumih[dan].remove(izpit)
+        self.izpiti.remove(izpit)
+
+    def preveri_datum(self, datum, dolzina_izpita):
         dan = datum.strftime("%x")    
         if dan in self.izpiti_po_datumih:
             for izpit in self.izpiti_po_datumih[dan]:
-                a, b = min(datum, izpit.datum), max(datum, izpit.datum)
-                if b - a < datetime.timedelta(minutes=a.dolzina_izpita):
+                dolzina_izpita2 = izpit.dolzina_izpita
+                if datum < izpit.datum and izpit.datum - datum < datetime.timedelta(minutes=dolzina_izpita):
+                    return False
+                elif izpit.datum < datum and datum - izpit.datum < datetime.timedelta(minutes=dolzina_izpita2):
                     return False
         return True
 
