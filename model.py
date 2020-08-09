@@ -24,6 +24,9 @@ class Predmet:
         self.izpiti = []
         self.izpiti_po_datumih = {}
 
+    def __str__(self):
+        return self.ime
+
     def dodaj_izpit(self, datum, dolzina_izpita, tematika, kolicina_gradiva):
         if not self.preveri_datum(datum, dolzina_izpita):
             raise ValueError('Ob tem času imate že zabeležen nek izpit!')
