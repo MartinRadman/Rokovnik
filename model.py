@@ -57,3 +57,6 @@ class Izpit:
         self.dolzina_izpita = dolzina_izpita
         self.tematika = tematika
         self.kolicina_gradiva = kolicina_gradiva
+
+    def __str__(self):
+        return f'{self.datum}: {self.tematika}'
