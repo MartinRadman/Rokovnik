@@ -6,22 +6,22 @@ import model, datetime
 r = model.Rokovnik('Kr en', 480)
 
 p1 = r.dodaj_predmet('Algebra', 8, 10)
-p1.dodaj_izpit(datetime.datetime(2020, 8, 20, 15, 30), 120, 'Kr neki', 100, 20)
-p1.dodaj_izpit(datetime.datetime(2020, 8, 4, 17, 30), 120, 'Kr neki', 100, 10)
+p1.dodaj_izpit(datetime.datetime(2020, 9, 20, 15, 30), 120, 'Kr neki', 100, 20)
+p1.dodaj_izpit(datetime.datetime(2020, 9, 4, 17, 30), 120, 'Kr neki', 100, 10)
 
 p2 = r.dodaj_predmet('Analiza', 8, 10)
-p2.dodaj_izpit(datetime.datetime(2020, 8, 9, 14, 00), 60, 'Še več kr neki', 120, 5)
-p2.dodaj_izpit(datetime.datetime(2020, 8, 9, 18, 25), 120, 'Spet kr neki', 60, 8)
+p2.dodaj_izpit(datetime.datetime(2020, 9, 9, 14, 00), 60, 'Še več kr neki', 120, 5)
+p2.dodaj_izpit(datetime.datetime(2020, 9, 9, 18, 25), 120, 'Spet kr neki', 60, 8)
 #Konec
 
-def zeleno(niz):
+def modro(niz):
     return f'\033[1;94m{niz}\033[0m'
 
 def rdece(niz):
     return f'\033[1;91m{niz}\033[0m'
 
 def uspeh():
-    print(zeleno('Uspešno opravljeno!'))
+    print(modro('Uspešno opravljeno!'))
 
 def meni():
     rokovnik = r
@@ -37,7 +37,7 @@ def uvodni_tekst(rokovnik):
     s = stanje(rokovnik)
     if s[0]:
         if s[1]:
-            prikaz_seznama(['Dodaj predmet', 'Odstrani predmet', 'Dodaj izpit', 'Odstrani izpit', 'Prikaži prihajajoče izpite'])
+            prikaz_seznama(['Dodaj predmet', 'Odstrani predmet', 'Dodaj izpit', 'Odstrani izpit', 'Prikaži prihajajoče izpite', 'Prikaži učni načrt'])
         else:
             prikaz_seznama(['Dodaj predmet', 'Odstrani predmet', 'Dodaj izpit'])
     else:
@@ -59,7 +59,7 @@ def preveri_veljavnost_vnosa(vnos, rokovnik):
     s = stanje(rokovnik)
     if s[0]:
         if s[1]:
-            vnos = preveri_mejo(vnos, [1, 5])
+            vnos = preveri_mejo(vnos, [1, 6])
         else:
             vnos = preveri_mejo(vnos, [1, 3])
     else:
@@ -77,6 +77,8 @@ def dejanje(vnos, rokovnik):
         odstrani_izpit(rokovnik)
     elif vnos == '5':
         prikazi_prihajajoce_izpite(rokovnik)
+    elif vnos == '6':
+        prikazi_ucni_nacrt(rokovnik)
     elif vnos.lower() == 'x':
         raise SystemExit
 
@@ -205,4 +207,13 @@ def prikazi_prihajajoce_izpite(rokovnik):
         for izpit in predmet.izpiti:
             print(izpit)
 
+def prikazi_ucni_nacrt(rokovnik):
+    rokovnik.razporedi_delo_enakomerno()
+    for datum in rokovnik.razporeditev_dela:
+        print(datum)
+        for izpit in rokovnik.razporeditev_dela[datum]:
+            print(izpit)
+            print(f'Predvidenih {rokovnik.razporeditev_dela[datum][izpit]} minut dela\n')
+
+r.razporedi_delo_enakomerno()
 meni()
