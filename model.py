@@ -1,11 +1,14 @@
 import datetime
 
 class Rokovnik:
-    def __init__(self):
+    def __init__(self, ime, delo_na_dan):
+        self.ime = ime
+        self.delo_na_dan = delo_na_dan
         self.predmeti = []
         self.izpiti = []
         self.izpiti_po_datumih = {}
         self.izpiti_po_pricakovanem_delu = {}
+        self.izpiti_po_prioriteti = []
 
     def dodaj_predmet(self, ime, pricakovana_ocena, tezavnost):
         for predmet in self.predmeti:
@@ -26,6 +29,35 @@ class Rokovnik:
         tezavnost = izpit.predmet.tezavnost
         minute = int((preostanek / (50 / tezavnost)) * 60)
         self.izpiti_po_pricakovanem_delu[izpit] = minute
+
+    def kolicina_dela_na_dan(self, izpit):
+        delo = self.izpiti_po_pricakovanem_delu[izpit]
+        st_dni = izpit.datum.day - datetime.datetime.now().day
+        return delo / st_dni
+
+    def razvrsti_po_prioriteti(self, izpit):
+        delo_na_dan = self.kolicina_dela_na_dan(izpit)
+        pricakovana_ocena = izpit.predmet.pricakovana_ocena
+        self.izpiti_po_prioriteti.append((izpit, int(delo_na_dan * pricakovana_ocena)))
+        self.izpiti_po_prioriteti.sort(key=lambda x: x[1])
+
+    def razporedi_delo(self, izpit, nacin):
+        if nacin == 'čim prej':
+            self.razporedi_delo_cim_prej(izpit)
+        elif nacin == 'enakomerno':
+            self.razporedi_delo_enakomerno(izpit)
+        else:
+            self.razporedi_delo_cim_kasneje(izpit)
+
+    def razporedi_delo_cim_prej(self, izpit):
+        pass
+
+    def razporedi_delo_enakomerno(self, izpit):
+        pass
+
+    def razporedi_delo_cim_kasneje(self, izpit):
+        pass
+
 
 class Predmet:
     def __init__(self, ime, pricakovana_ocena, tezavnost, rokovnik):
@@ -84,7 +116,7 @@ class Izpit:
         self.predmet = predmet
 
     def __str__(self):
-        return f'{self.predmet} {self.datum} {self.dolzina_izpita} minut: {self.tematika}'
+        return f'\033[92m{self.predmet}\033[0m {self.datum} {self.dolzina_izpita} minut: {self.tematika}'
 
     def __gt__(self, other):
         return self.datum > other.datum

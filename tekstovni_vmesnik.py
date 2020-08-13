@@ -3,10 +3,10 @@ import model, datetime
 #Začasna testna koda
 import model, datetime
 
-r = model.Rokovnik()
+r = model.Rokovnik('Kr en', 480)
 
 p1 = r.dodaj_predmet('Algebra', 8, 10)
-p1.dodaj_izpit(datetime.datetime(2020, 8, 4, 15, 30), 120, 'Kr neki', 100, 20)
+p1.dodaj_izpit(datetime.datetime(2020, 8, 20, 15, 30), 120, 'Kr neki', 100, 20)
 p1.dodaj_izpit(datetime.datetime(2020, 8, 4, 17, 30), 120, 'Kr neki', 100, 10)
 
 p2 = r.dodaj_predmet('Analiza', 8, 10)
@@ -64,7 +64,7 @@ def preveri_veljavnost_vnosa(vnos, rokovnik):
             vnos = preveri_mejo(vnos, [1, 3])
     else:
         vnos = preveri_mejo(vnos, [1, 1])
-    return vnos
+    return str(vnos)
 
 def dejanje(vnos, rokovnik):
     if vnos == '1':
@@ -84,7 +84,12 @@ def dodaj_predmet(rokovnik):
     ime = input('Kako je ime predmetu? > ')
     pricakovana_ocena = preveri_mejo(v_stevilko(input('Kolikšna je pričakovana ocena predmeta? > ')), [5, 10])
     tezavnost = preveri_mejo(v_stevilko(input('Kako bi ocenili težavnost predmeta na lestvici od 1 (najlažje) do 10 (najtežje)? > ')), [1, 10])
-    rokovnik.dodaj_predmet(ime, pricakovana_ocena, tezavnost)
+    while True:
+        try:
+            rokovnik.dodaj_predmet(ime, pricakovana_ocena, tezavnost)
+            break
+        except:
+            ime = input(rdece('Predmet s tem imenom že obstaja. Prosimo, vnesite novo ime! > '))
     uspeh()
 
 def v_stevilko(niz):
