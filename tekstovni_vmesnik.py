@@ -6,12 +6,12 @@ import model, datetime
 r = model.Rokovnik('Kr en', 480)
 
 p1 = r.dodaj_predmet('Algebra', 8, 10)
-p1.dodaj_izpit(datetime.datetime(2020, 9, 20, 15, 30), 120, 'Kr neki', 100, 20)
-p1.dodaj_izpit(datetime.datetime(2020, 9, 4, 17, 30), 120, 'Kr neki', 100, 10)
+p1.dodaj_izpit(datetime.datetime(2020, 9, 1, 15, 30), 120, 'Kr neki', 100, 20)
+p1.dodaj_izpit(datetime.datetime(2020, 9, 1, 17, 30), 120, 'Kr neki', 100, 10)
 
 p2 = r.dodaj_predmet('Analiza', 8, 10)
-p2.dodaj_izpit(datetime.datetime(2020, 9, 9, 14, 00), 60, 'Še več kr neki', 120, 5)
-p2.dodaj_izpit(datetime.datetime(2020, 9, 9, 18, 25), 120, 'Spet kr neki', 60, 8)
+p2.dodaj_izpit(datetime.datetime(2020, 9, 1, 14, 00), 60, 'Še več kr neki', 120, 5)
+p2.dodaj_izpit(datetime.datetime(2020, 9, 1, 18, 25), 120, 'Spet kr neki', 60, 8)
 #Konec
 
 def modro(niz):
@@ -208,12 +208,31 @@ def prikazi_prihajajoce_izpite(rokovnik):
             print(izpit)
 
 def prikazi_ucni_nacrt(rokovnik):
-    rokovnik.razporedi_delo_enakomerno()
+    kaj_prikazano = False
+    dolzina = do_kdaj_hoces_podatke()
+    ostanek = rokovnik.razporedi_delo_enakomerno()
     for datum in rokovnik.razporeditev_dela:
+        if (datetime.datetime.strptime(datum, '%m/%d/%y') - datetime.datetime.now()).days > dolzina:
+            continue
+        kaj_prikazano = True
         print(datum)
         for izpit in rokovnik.razporeditev_dela[datum]:
-            print(izpit)
-            print(f'Predvidenih {rokovnik.razporeditev_dela[datum][izpit]} minut dela\n')
+            cas = rokovnik.razporeditev_dela[datum][izpit]
+            if cas != 0:
+                print(izpit)
+                print(f'Predvidenih je {cas} minut dela.\n')
+    preveri_ostanek(ostanek)
+    if not kaj_prikazano:
+        print(modro(f'\nZa ta čas nimate razporejenega nič dela. :D'))
+
+def preveri_ostanek(ostanek):
+    if ostanek:
+        for izpit in ostanek:
+            print(f'Žal vam za izpit {izpit} zmanjka {ostanek[izpit]} minut dela.')
+
+def do_kdaj_hoces_podatke():
+    dolzina = input('Za koliko dni vnaprej hočete videti učni načrt? > ')
+    return v_stevilko(dolzina)
 
 r.razporedi_delo_enakomerno()
 meni()

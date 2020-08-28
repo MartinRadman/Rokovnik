@@ -33,9 +33,15 @@ class Rokovnik:
 
     def kolicina_dela_na_dan(self, izpit):
         delo = self.izpiti_po_pricakovanem_delu[izpit]
+        st_dni = self.stevilo_dni_do_izpita(izpit)
+        try:
+            return delo / st_dni
+        except:
+            return -1
+
+    def stevilo_dni_do_izpita(self, izpit):
         razlika = izpit.datum - datetime.datetime.now()
-        st_dni = razlika.days - 1
-        return delo / st_dni
+        return razlika.days
 
     def razvrsti_po_prioriteti(self, izpit):
         delo_na_dan = self.kolicina_dela_na_dan(izpit)
@@ -54,39 +60,31 @@ class Rokovnik:
             ValueError('Tak način razporeditve dela ne obstaja!')
 
     def razporedi_delo_enakomerno(self):
+        ostanek_dela = {}
         for izpit, _ in self.izpiti_po_prioriteti:
-            razporeditev_dela = self.razporeditev_dela
-            celotno_delo = self.izpiti_po_pricakovanem_delu[izpit]
-            delo_na_dan = self.kolicina_dela_na_dan(izpit)
-            razpolozljivi = self.razpolozljivi_dnevi(izpit)        
-            celotno_delo = self.prvotna_enakomerna_razporeditev(izpit, razpolozljivi, razporeditev_dela, delo_na_dan, celotno_delo)
-            if celotno_delo > 0:
-                celotno_delo = self.drugotna_enakomerna_razporeditev(izpit, razpolozljivi, razporeditev_dela, delo_na_dan, celotno_delo)
-            if celotno_delo > 0:
-                raise Exception('Ni dovolj časa!')
-            self.razporeditev_dela = razporeditev_dela
+            celotno_delo1 = self.enakomerna_razporeditev(izpit, self.kolicina_dela_na_dan(izpit), self.izpiti_po_pricakovanem_delu[izpit])
+            celotno_delo2 = self.izpiti_po_pricakovanem_delu[izpit]
+            while celotno_delo1 != celotno_delo2:
+                celotno_delo2 = celotno_delo1
+                celotno_delo1 = self.enakomerna_razporeditev(izpit, celotno_delo1 / self.stevilo_dni_do_izpita(izpit), celotno_delo1)
+            if celotno_delo1 > 0:
+                ostanek_dela[izpit] = celotno_delo1
+        return ostanek_dela
 
-    def prvotna_enakomerna_razporeditev(self, izpit, razpolozljivi, razporeditev_dela, delo_na_dan, celotno_delo):
-        for razpolozljivi_dan in razpolozljivi:
+    def enakomerna_razporeditev(self, izpit, delo_na_dan, celotno_delo):
+        for razpolozljivi_dan in self.razpolozljivi_dnevi(izpit):
+                if celotno_delo <= 0:
+                    break
                 dan = razpolozljivi_dan.strftime("%x")
-                zasedeno = self.preveri_koliko_je_dela_na_dan(razporeditev_dela, dan)
+                zasedeno = self.preveri_koliko_je_dela_na_dan(dan)
                 na_razpolagi = self.delo_na_dan - zasedeno
                 dodeljeno_delo = math.ceil(min(na_razpolagi, delo_na_dan))
-                razporeditev_dela[dan] = {**razporeditev_dela.get(dan, {}), **{izpit: dodeljeno_delo}}
+                if izpit in self.razporeditev_dela.get(dan, {}):
+                    self.razporeditev_dela[dan][izpit] += dodeljeno_delo
+                else: 
+                    self.razporeditev_dela[dan] = {**self.razporeditev_dela.get(dan, {}), **{izpit: dodeljeno_delo}}
                 celotno_delo -= dodeljeno_delo
         return celotno_delo
-
-    def drugotna_enakomerna_razporeditev(self, izpit, razpolozljivi, razporeditev_dela, delo_na_dan, celotno_delo):
-        for razpolozljiv_dan in razpolozljivi:
-                    dan = razpolozljiv_dan.strftime("%x")
-                    zasedeno = self.preveri_koliko_je_dela_na_dan(razporeditev_dela, dan)
-                    na_razpolagi = self.delo_na_dan - zasedeno
-                    if na_razpolagi > 0:
-                        dodeljeno_delo = min(na_razpolagi, celotno_delo)
-                        razporeditev_dela[dan][izpit] += dodeljeno_delo
-                        celotno_delo -=  dodeljeno_delo
-        return celotno_delo
-
 
     @staticmethod
     def razpolozljivi_dnevi(izpit):
@@ -98,10 +96,9 @@ class Rokovnik:
                 razpolozljivi_dnevi.append(datum)
         return razpolozljivi_dnevi
 
-    @staticmethod
-    def preveri_koliko_je_dela_na_dan(razporeditev_dela, dan):
+    def preveri_koliko_je_dela_na_dan(self, dan):
         try:
-            delo_po_predmetih = razporeditev_dela[dan]
+            delo_po_predmetih = self.razporeditev_dela[dan]
             delo = sum(delo_po_predmetih.values())
             return delo
         except:
@@ -175,7 +172,7 @@ class Izpit:
         self.predmet = predmet
 
     def __str__(self):
-        return f'\033[92m{self.predmet}\033[0m {self.datum} {self.dolzina_izpita} minut: {self.tematika}'
+        return f'\033[92m{self.predmet}\033[0m Izpit bo bil izveden {self.datum} in bo trajal {self.dolzina_izpita} minut. Opis: {self.tematika}'
 
     def __gt__(self, other):
         return self.datum > other.datum
