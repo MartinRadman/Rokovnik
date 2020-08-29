@@ -1,0 +1,30 @@
+% rebase('osnova.html')
+<pre>
+
+/$$$$$$$            /$$                                      /$$ /$$      
+| $$__  $$          | $$                                     |__/| $$      
+| $$  \ $$  /$$$$$$ | $$   /$$  /$$$$$$  /$$    /$$ /$$$$$$$  /$$| $$   /$$
+| $$$$$$$/ /$$__  $$| $$  /$$/ /$$__  $$|  $$  /$$/| $$__  $$| $$| $$  /$$/
+| $$__  $$| $$  \ $$| $$$$$$/ | $$  \ $$ \  $$/$$/ | $$  \ $$| $$| $$$$$$/ 
+| $$  \ $$| $$  | $$| $$_  $$ | $$  | $$  \  $$$/  | $$  | $$| $$| $$_  $$ 
+| $$  | $$|  $$$$$$/| $$ \  $$|  $$$$$$/   \  $/   | $$  | $$| $$| $$ \  $$
+|__/  |__/ \______/ |__/  \__/ \______/     \_/    |__/  |__/|__/|__/  \__/
+                                                                           
+</pre>
+
+<h1>Seznam izpitov</h1>
+<ul>
+    % for predmet in rokovnik.predmeti:
+    <li><b>{{predmet.ime}}</b></li>
+        <ul>
+            % for izpit in predmet.izpiti:
+            <li>Datum: {{izpit.datum}}</li>
+            <li>Dolžina izpita: {{izpit.dolzina_izpita}}</li>
+            <li>Tematika: {{izpit.tematika}}</li>
+            <li>Količina gradiva: {{izpit.kolicina_gradiva}} strani</li>
+            <li>Že predelano gradivo: {{izpit.predelano_gradivo}} strani</li>
+            <br>
+            % end
+        </ul>
+    % end
+</ul>

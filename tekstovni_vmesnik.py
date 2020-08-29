@@ -6,12 +6,12 @@ import model, datetime
 r = model.Rokovnik('Kr en', 480)
 
 p1 = r.dodaj_predmet('Algebra', 8, 10)
-p1.dodaj_izpit(datetime.datetime(2020, 9, 1, 15, 30), 120, 'Kr neki', 100, 20)
-p1.dodaj_izpit(datetime.datetime(2020, 9, 1, 17, 30), 120, 'Kr neki', 100, 10)
+p1.dodaj_izpit(datetime.datetime(2020, 9, 20, 15, 30), 120, 'Kr neki', 100, 20)
+p1.dodaj_izpit(datetime.datetime(2020, 9, 20, 17, 30), 120, 'Kr neki', 100, 10)
 
 p2 = r.dodaj_predmet('Analiza', 8, 10)
-p2.dodaj_izpit(datetime.datetime(2020, 9, 1, 14, 00), 60, 'Še več kr neki', 120, 5)
-p2.dodaj_izpit(datetime.datetime(2020, 9, 1, 18, 25), 120, 'Spet kr neki', 60, 8)
+p2.dodaj_izpit(datetime.datetime(2020, 9, 20, 14, 00), 60, 'Še več kr neki', 120, 5)
+p2.dodaj_izpit(datetime.datetime(2020, 9, 20, 18, 25), 120, 'Spet kr neki', 60, 8)
 #Konec
 
 def modro(niz):
@@ -97,6 +97,8 @@ def dodaj_predmet(rokovnik):
 def v_stevilko(niz):
     if type(niz) == int:
         return niz
+    if niz == 'x':
+        meni()
     while True:
         if niz.isdigit():
             return int(niz)
@@ -234,5 +236,4 @@ def do_kdaj_hoces_podatke():
     dolzina = input('Za koliko dni vnaprej hočete videti učni načrt? > ')
     return v_stevilko(dolzina)
 
-r.razporedi_delo_enakomerno()
 meni()
