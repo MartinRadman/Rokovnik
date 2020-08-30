@@ -12,10 +12,29 @@
                                                                            
 </pre>
 
+<script>
+    function myFunction(id) {
+      var x = document.getElementById(id);
+      if (x.style.display === 'none') {
+        x.style.display = 'block';
+      } else {
+        x.style.display = 'none';
+      }
+    }
+</script>
+
 <h1>Seznam izpitov</h1>
 <ul>
     % for predmet in rokovnik.predmeti:
     <li><b>{{predmet.ime}}</b></li>
+
+        <form action='/odstrani-predmet/' method='POST' type='hidden'>
+        <input type='hidden' name='predmet' value='{{predmet.ime}}'>
+        <input type='submit' value='Odstrani predmet'>
+        </form>
+
+        <br>
+        
         <ul>
             % for izpit in predmet.izpiti:
             <li>Datum: {{izpit.datum}}</li>
@@ -23,12 +42,38 @@
             <li>Tematika: {{izpit.tematika}}</li>
             <li>Količina gradiva: {{izpit.kolicina_gradiva}} strani</li>
             <li>Že predelano gradivo: {{izpit.predelano_gradivo}} strani</li>
+
+            <form action='/odstrani-izpit/' method='POST' type='hidden'>
+            <input type='hidden' name='predmet' value='{{predmet.ime}}'>
+            <input type='hidden' name='izpit' value='{{izpit.datum}}'>
+            <input type='submit' value='Odstrani izpit'>
+            </form>
+
             <br>
+            <br>
+
             % end
+            <li><button onclick="myFunction('{{predmet.ime}}')">Nov izpit</button></li>
+            <div id='{{predmet.ime}}' hidden>
+            <li><form action='/dodaj-izpit/' method='POST' type='hidden'>
+                <input type='hidden' name='predmet' value='{{predmet.ime}}'>
+                % include('_izbira_datuma.html', id='datum', oznaka='Datum:')
+                Dolžina izpita (v minutah): <input type='text' name='dolzina_izpita'>
+                Tematika: <input type='text' name='tematika'>
+                Količina gradiva (št. strani): <input type='text' name='kolicina_gradiva'>
+                Že predelano gradivo (št. strani): <input type='text' name='predelano_gradivo'>
+                <input type='submit' value='Dodaj izpit'>
+            </form></li>
+            </div>
         </ul>
+
+        <br>
+
     % end
 </ul>
 
+
+<b>Dodaj nov predmet:</b>
 <form action='/dodaj-predmet/' method='POST'>
     Ime predmeta: <input type='text' name='ime'>
     Pricakovana ocena: <input type='text' name='pricakovana_ocena'>
@@ -37,13 +82,3 @@
 </form>
 
 <br>
-
-<form action='/dodaj-izpit/' method='POST'>
-    % include('_izbira_predmeta.html', id='predmet', oznaka='Izberi predmet:')
-    % include('_izbira_datuma.html', id='datum', oznaka='Datum:')
-    Dolžina izpita (v minutah): <input type='text' name='dolzina_izpita'>
-    Tematika: <input type='text' name='tematika'>
-    Količina gradiva (št. strani): <input type='text' name='kolicina_gradiva'>
-    Že predelano gradivo (št. strani): <input type='text' name='predelano_gradivo'>
-    <input type='submit' value='Dodaj izpit'>
-</form>

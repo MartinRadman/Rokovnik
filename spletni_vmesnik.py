@@ -38,5 +38,18 @@ def dodaj_izpit():
     predmet.dodaj_izpit(datum, dolzina_izpita, tematika, int(kolicina_gradiva), int(predelano_gradivo))
     bottle.redirect('/')
 
+@bottle.post('/odstrani-predmet/')
+def odstrani_predmet():
+    predmet = rokovnik.poisci_predmet_glede_na_ime(bottle.request.forms.getunicode('predmet'))
+    rokovnik.odstrani_predmet(predmet)
+    bottle.redirect('/')
+
+@bottle.post('/odstrani-izpit/')
+def odstrani_izpit():
+    predmet = rokovnik.poisci_predmet_glede_na_ime(bottle.request.forms.getunicode('predmet'))
+    datum = datetime.datetime.strptime(bottle.request.forms.getunicode('izpit'), '%Y-%m-%d %H:%M:%S')
+    izpit = predmet.najdi_izpit_glede_na_cas(datum)
+    predmet.odstrani_izpit(izpit)
+    bottle.redirect('/')
 
 bottle.run(debug=True, reloader=True)

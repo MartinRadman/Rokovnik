@@ -1,0 +1,7 @@
+<label for='{{id}}'>{{oznaka}}</label>
+
+<select id='{{id}}' name='{{id}}'>
+    % for izpit in rokovnik.izpiti:
+    <option value='{{izpit.ime}}'>{{izpit.ime}}</option>
+    % end
+</select>

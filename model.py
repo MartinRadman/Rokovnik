@@ -168,6 +168,12 @@ class Predmet:
                     return False
         return True
 
+    def najdi_izpit_glede_na_cas(self, datum):
+        for izpit in self.izpiti:
+            if izpit.datum == datum:
+                return izpit
+        return ValueError('Izpit ob tem času ne obstaja!')
+
 class Izpit:
     def __init__(self, datum, dolzina_izpita, tematika, kolicina_gradiva, predelano_gradivo, predmet):
         self.datum = datum
@@ -176,6 +182,7 @@ class Izpit:
         self.kolicina_gradiva = kolicina_gradiva
         self.predelano_gradivo = predelano_gradivo
         self.predmet = predmet
+        self.ime = f'Izpit pri predmetu {self.predmet}, ki bo izveden {self.datum}'
 
     def __str__(self):
         return f'\033[92m{self.predmet}\033[0m Izpit bo bil izveden {self.datum} in bo trajal {self.dolzina_izpita} minut. Opis: {self.tematika}'
