@@ -19,7 +19,7 @@
         <ul>
             % for izpit in predmet.izpiti:
             <li>Datum: {{izpit.datum}}</li>
-            <li>Dolžina izpita: {{izpit.dolzina_izpita}}</li>
+            <li>Dolžina izpita: {{izpit.dolzina_izpita}} minut</li>
             <li>Tematika: {{izpit.tematika}}</li>
             <li>Količina gradiva: {{izpit.kolicina_gradiva}} strani</li>
             <li>Že predelano gradivo: {{izpit.predelano_gradivo}} strani</li>
@@ -28,3 +28,22 @@
         </ul>
     % end
 </ul>
+
+<form action='/dodaj-predmet/' method='POST'>
+    Ime predmeta: <input type='text' name='ime'>
+    Pricakovana ocena: <input type='text' name='pricakovana_ocena'>
+    Tezavnost: <input type='text' name='tezavnost'>
+    <input type='submit' value='Dodaj predmet'>
+</form>
+
+<br>
+
+<form action='/dodaj-izpit/' method='POST'>
+    % include('_izbira_predmeta.html', id='predmet', oznaka='Izberi predmet:')
+    % include('_izbira_datuma.html', id='datum', oznaka='Datum:')
+    Dolžina izpita (v minutah): <input type='text' name='dolzina_izpita'>
+    Tematika: <input type='text' name='tematika'>
+    Količina gradiva (št. strani): <input type='text' name='kolicina_gradiva'>
+    Že predelano gradivo (št. strani): <input type='text' name='predelano_gradivo'>
+    <input type='submit' value='Dodaj izpit'>
+</form>

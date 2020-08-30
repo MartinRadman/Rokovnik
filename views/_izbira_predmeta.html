@@ -1,0 +1,7 @@
+<label for='{{id}}'>{{oznaka}}</label>
+
+<select id='{{id}}' name='{{id}}'>
+    % for predmet in rokovnik.predmeti:
+    <option value='{{predmet.ime}}'>{{predmet.ime}}</option>
+    % end
+</select>

@@ -23,6 +23,12 @@ class Rokovnik:
     def odstrani_predmet(self, predmet):
         self.predmeti.remove(predmet)
 
+    def poisci_predmet_glede_na_ime(self, ime_predmeta):
+        for predmet in self.predmeti:
+            if predmet.ime == ime_predmeta:
+                return predmet
+        return ValueError('Predmet s tem imenom ne obstaja!')
+
     def oceni_pricakovano_delo(self, izpit):
         kolicina_gradiva = izpit.kolicina_gradiva
         predelano_gradivo = izpit.predelano_gradivo
