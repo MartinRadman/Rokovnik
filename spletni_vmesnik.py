@@ -3,7 +3,7 @@ import bottle
 #Začasna testna koda
 import model, datetime
 
-rokovnik = model.Rokovnik('Kr en', 480)
+rokovnik = model.Rokovnik(480)
 
 p1 = rokovnik.dodaj_predmet('Algebra', 8, 10)
 p1.dodaj_izpit(datetime.datetime(2020, 8, 20, 15, 30), 120, 'Kr neki', 100, 20)

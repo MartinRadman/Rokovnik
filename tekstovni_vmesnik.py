@@ -1,19 +1,5 @@
 import model, datetime
 
-#Začasna testna koda
-import model, datetime
-
-r = model.Rokovnik('Kr en', 480)
-
-p1 = r.dodaj_predmet('Algebra', 8, 10)
-p1.dodaj_izpit(datetime.datetime(2020, 9, 20, 15, 30), 120, 'Kr neki', 100, 20)
-p1.dodaj_izpit(datetime.datetime(2020, 9, 20, 17, 30), 120, 'Kr neki', 100, 10)
-
-p2 = r.dodaj_predmet('Analiza', 8, 10)
-p2.dodaj_izpit(datetime.datetime(2020, 9, 20, 14, 00), 60, 'Še več kr neki', 120, 5)
-p2.dodaj_izpit(datetime.datetime(2020, 9, 20, 18, 25), 120, 'Spet kr neki', 60, 8)
-#Konec
-
 def modro(niz):
     return f'\033[1;94m{niz}\033[0m'
 
@@ -22,10 +8,22 @@ def rdece(niz):
 
 def uspeh():
     print(modro('Uspešno opravljeno!'))
+    
+def shrani():   
+    rokovnik.shrani_stanje('stanje.json')
+
+DATOTEKA_S_STANJEM = 'stanje.json'
+
+try:
+    rokovnik = model.Rokovnik.nalozi_stanje(DATOTEKA_S_STANJEM)
+except FileNotFoundError:
+    print(modro('Pozdravljeni v spletnem rokovniku!') + ' ' + 'Najprej vnesite število minut, ki jih želite vsak dan porabiti za učenje.')
+    delo_na_dan = input('> ')
+    rokovnik = model.Rokovnik(delo_na_dan)
 
 def meni():
-    rokovnik = r
     while True:
+        shrani()
         uvodni_tekst(rokovnik)
         print('\tX) Izhod iz programa')
         vnos = input('> ')
@@ -159,7 +157,7 @@ def odstrani_predmet(rokovnik):
 
 def dodaj_izpit(rokovnik):
     predmet = izbira_predmeta(rokovnik)
-    predmet.dodaj_izpit(*podatki_za_predmet(predmet), predmet)
+    predmet.dodaj_izpit(*podatki_za_predmet(predmet))
     uspeh()
 
 def izbira_predmeta(rokovnik):
@@ -174,7 +172,8 @@ def podatki_za_predmet(predmet):
     dolzina_izpita = preveri_mejo(v_stevilko(input('Koliko minut bo trajal izpit? > ')), [0, None])
     tematika = input('Dodajte kratek opis izpita. > ')
     kolicina_gradiva = preveri_mejo(v_stevilko(input('Koliko strani gradiva morate predelati za izpit? > ')), [0, None])
-    return datum, dolzina_izpita, tematika, kolicina_gradiva
+    predelano_gradivo = preveri_mejo(v_stevilko(input('Koliko strani gradiva ste že predelali? > ')), [0, None])
+    return datum, dolzina_izpita, tematika, kolicina_gradiva, predelano_gradivo
 
 def vnos_datuma(predmet):
     leto = preveri_mejo(v_stevilko(input('Katerega leta bo izpit? > ')), [None, None])

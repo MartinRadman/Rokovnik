@@ -1,0 +1,25 @@
+{
+    "delo_na_dan": "480",
+    "predmeti": [
+        {
+            "ime": "Algebra",
+            "pricakovana_ocena": 8,
+            "tezavnost": 10
+        },
+        {
+            "ime": "Analiza",
+            "pricakovana_ocena": 8,
+            "tezavnost": 10
+        }
+    ],
+    "izpiti": [
+        {
+            "datum": "2020-08-15 15:30:00",
+            "dolzina_izpita": 120,
+            "tematika": "50",
+            "kolicina_gradiva": 50,
+            "predelano_gradivo": 20,
+            "predmet": "Analiza"
+        }
+    ]
+}

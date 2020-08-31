@@ -1,8 +1,7 @@
-import datetime, math
+import datetime, math, json
 
 class Rokovnik:
-    def __init__(self, ime, delo_na_dan):
-        self.ime = ime
+    def __init__(self, delo_na_dan):
         self.delo_na_dan = delo_na_dan
         self.predmeti = []
         self.izpiti = []
@@ -55,16 +54,6 @@ class Rokovnik:
         self.izpiti_po_prioriteti.append((izpit, int(delo_na_dan * pricakovana_ocena)))
         self.izpiti_po_prioriteti.sort(key=lambda x: x[1])
 
-    def razporedi_delo(self, nacin):
-        if nacin == 'enakomerno':
-            self.razporedi_delo_enakomerno()
-        elif nacin == 'čim prej':
-            self.razporedi_delo_cim_prej()
-        elif nacin == 'čim kasneje':
-            self.razporedi_delo_cim_kasneje()
-        else:
-            ValueError('Tak način razporeditve dela ne obstaja!')
-
     def razporedi_delo_enakomerno(self):
         ostanek_dela = {}
         for izpit, _ in self.izpiti_po_prioriteti:
@@ -110,12 +99,53 @@ class Rokovnik:
         except:
             return 0
 
-    def razporedi_delo_cim_prej(self):
-        pass
+    def slovar_s_stanjem(self):
+        return {
+            'delo_na_dan': self.delo_na_dan,
+            'predmeti': [{
+                'ime': predmet.ime,
+                'pricakovana_ocena': predmet.pricakovana_ocena,
+                'tezavnost': predmet.tezavnost
+            } for predmet in self.predmeti],
+            'izpiti': [{
+                'datum': str(izpit.datum),
+                'dolzina_izpita': izpit.dolzina_izpita,
+                'tematika': izpit.tematika,
+                'kolicina_gradiva': izpit.kolicina_gradiva,
+                'predelano_gradivo': izpit.predelano_gradivo,
+                'predmet': str(izpit.predmet)
+            } for izpit in self.izpiti],
+        }
 
-    def razporedi_delo_cim_kasneje(self):
-        pass
-
+    @staticmethod
+    def nalozi_iz_slovarja(slovar_s_stanjem):
+        rokovnik = Rokovnik(slovar_s_stanjem['delo_na_dan'])
+        for predmet in slovar_s_stanjem['predmeti']:
+            predmet_obj = rokovnik.dodaj_predmet(
+                predmet['ime'],
+                predmet['pricakovana_ocena'],
+                predmet['tezavnost'],
+                )
+            for izpit in slovar_s_stanjem['izpiti']:
+                if predmet['ime'] == izpit['predmet']:
+                    predmet_obj.dodaj_izpit(
+                        datetime.datetime.strptime(izpit['datum'], '%Y-%m-%d %H:%M:%S'),
+                        izpit['dolzina_izpita'],
+                        izpit['tematika'],
+                        izpit['kolicina_gradiva'],
+                        izpit['predelano_gradivo']
+                        )
+        return rokovnik
+    
+    def shrani_stanje(self, ime_datoteke):
+        with open(ime_datoteke, 'w') as datoteka:
+            json.dump(self.slovar_s_stanjem(), datoteka, ensure_ascii=False, indent=4)
+    
+    @classmethod
+    def nalozi_stanje(cls, datoteka):
+        with open(datoteka) as dat:
+            slovar_s_stanjem = json.load(dat)
+        return cls.nalozi_iz_slovarja(slovar_s_stanjem)
 
 class Predmet:
     def __init__(self, ime, pricakovana_ocena, tezavnost, rokovnik):
