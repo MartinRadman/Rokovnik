@@ -31,8 +31,8 @@ class Rokovnik:
     def oceni_pricakovano_delo(self, izpit):
         kolicina_gradiva = izpit.kolicina_gradiva
         predelano_gradivo = izpit.predelano_gradivo
-        preostanek = kolicina_gradiva - predelano_gradivo
-        tezavnost = izpit.predmet.tezavnost
+        preostanek = int(kolicina_gradiva - predelano_gradivo)
+        tezavnost = int(izpit.predmet.tezavnost)
         minute = int((preostanek / (50 / tezavnost)) * 60)
         self.izpiti_po_pricakovanem_delu[izpit] = minute
 
@@ -50,7 +50,7 @@ class Rokovnik:
 
     def razvrsti_po_prioriteti(self, izpit):
         delo_na_dan = self.kolicina_dela_na_dan(izpit)
-        pricakovana_ocena = izpit.predmet.pricakovana_ocena
+        pricakovana_ocena = int(izpit.predmet.pricakovana_ocena)
         self.izpiti_po_prioriteti.append((izpit, int(delo_na_dan * pricakovana_ocena)))
         self.izpiti_po_prioriteti.sort(key=lambda x: x[1])
 
@@ -138,12 +138,12 @@ class Rokovnik:
         return rokovnik
     
     def shrani_stanje(self, ime_datoteke):
-        with open(ime_datoteke, 'w') as datoteka:
+        with open(ime_datoteke, 'w', encoding='UTF-8') as datoteka:
             json.dump(self.slovar_s_stanjem(), datoteka, ensure_ascii=False, indent=4)
     
     @classmethod
     def nalozi_stanje(cls, datoteka):
-        with open(datoteka) as dat:
+        with open(datoteka, encoding='UTF-8') as dat:
             slovar_s_stanjem = json.load(dat)
         return cls.nalozi_iz_slovarja(slovar_s_stanjem)
 
