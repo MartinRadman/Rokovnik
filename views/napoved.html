@@ -1,0 +1,31 @@
+% rebase('osnova.html')
+
+<div class="container no-padding">
+    <div class="row background-img vmiddle"></div>
+        <div class="text-center">
+            <h1>NAČRT DELA</h1>
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Datum</th>
+        <th scope="col">Razpored</th>
+      </tr>
+    </thead>
+    <tbody>
+        % razporeditev = rokovnik.razporeditev_dela
+        % for datum in razporeditev:
+        <tr>
+        <th scope="row">{{datum}}</th>
+        <td>
+        % for izpit in razporeditev[datum]:
+        {{izpit.ime}}: {{razporeditev[datum][izpit]}} minut dela<br>
+        % end
+        </td>
+        </tr>
+        % end
+    </tbody>
+  </table>

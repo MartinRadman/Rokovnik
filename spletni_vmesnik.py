@@ -1,29 +1,75 @@
-import bottle, model, datetime, os
+import bottle, model, datetime, os, hashlib
 
-rokovniki = {}
-for dat in os.listdir('shramba'):
-    stevilo = ''
-    for kandidat in dat:
-        if kandidat.isdigit():
-            stevilo += kandidat
-    stevilo = int(stevilo)
-    rokovniki[stevilo] = model.Rokovnik.nalozi_stanje(os.path.join('shramba', dat))
+
+racuni = {}
+
+if not os.path.isdir('shramba'):
+    os.mkdir('shramba')
+
+for datoteka in os.listdir('shramba'):
+    racun = model.Racun.nalozi_stanje(os.path.join('shramba', datoteka))
+    racuni[racun.ime] = racun
+
+def racun_uporabnika():
+    ime = bottle.request.get_cookie('ime', secret='sikret')
+    if ime is None:
+        bottle.redirect('/prijava/')
+    return racuni[ime]
 
 def rokovnik_uporabnika():
-    st_uporabnika = bottle.request.get_cookie('st_uporabnika', secret='sikret')
-    if st_uporabnika is None:
-        st_uporabnika = len(rokovniki) + 1
-        rokovniki[st_uporabnika] = model.Rokovnik(480)
-        bottle.response.set_cookie('st_uporabnika', st_uporabnika, path='/', secret='sikret')
-    return rokovniki[st_uporabnika]
+    return racun_uporabnika().rokovnik
 
-def shrani_rokovnik():
-    stevilo = bottle.request.get_cookie('st_uporabnika', secret='sikret')
-    rokovnik = rokovniki[stevilo]
-    rokovnik.shrani_stanje(os.path.join('shramba', f'Rokovnik_st_{stevilo}.json'))
+def shrani_rokovnik():  
+    racun = racun_uporabnika()
+    racun.shrani_stanje(os.path.join('shramba', f'{racun.ime}.json'))
+
+
+@bottle.get('/prijava/')
+def prijava_get():
+    return bottle.template('prijava_v_racun.html')
+
+
+
+@bottle.post('/prijava/')
+def prijava_post():
+    ime = bottle.request.forms.getunicode('ime')
+    geslo = bottle.request.forms.getunicode('geslo')
+    sifra = hashlib.sha512()
+    sifra.update(geslo.encode(encoding='UTF-8'))
+    boljse_geslo = sifra.hexdigest()
+    racun = racuni[ime]
+    racun.avtentikacija_gesla(boljse_geslo)
+    bottle.response.set_cookie('ime', racun.ime, path='/', secret='sikret')
+    bottle.redirect('/')
+
+
+@bottle.post('/odjava/')
+def odjava():
+    bottle.response.delete_cookie('ime', path='/')
+    bottle.redirect('/')
+
+@bottle.get('/registracija/')
+def registracija_get():
+    return bottle.template('registracija.html')
+
+@bottle.post('/registracija/')
+def registracija_post():
+    ime = bottle.request.forms.getunicode('ime')
+    geslo = bottle.request.forms.getunicode('geslo')
+    delo_na_dan = int(bottle.request.forms.getunicode('delo_na_dan'))
+    sifra = hashlib.sha512()
+    sifra.update(geslo.encode(encoding='UTF-8'))
+    boljse_geslo = sifra.hexdigest()
+    racun = model.Racun(ime, boljse_geslo, model.Rokovnik(delo_na_dan))
+    racuni[ime] = racun
+    bottle.response.set_cookie('ime', racun.ime, path='/', secret='sikret')
+    bottle.redirect('/')
+
+
 
 @bottle.get('/')
 def zacetna_stran():
+    shrani_rokovnik()
     rokovnik = rokovnik_uporabnika()
     return bottle.template('zacetna_stran.html', rokovnik=rokovnik)
 
@@ -68,5 +114,12 @@ def odstrani_izpit():
     predmet.odstrani_izpit(izpit)
     shrani_rokovnik()
     bottle.redirect('/')
+
+@bottle.get('/napoved/')
+def napoved():
+    rokovnik = rokovnik_uporabnika()
+    rokovnik.razporedi_delo_enakomerno()
+    shrani_rokovnik()
+    return bottle.template('napoved.html', rokovnik=rokovnik)
 
 bottle.run(debug=True, reloader=True)

@@ -1,21 +1,12 @@
 % rebase('osnova.html')
-<pre>
 
-/$$$$$$$            /$$                                      /$$ /$$      
-| $$__  $$          | $$                                     |__/| $$      
-| $$  \ $$  /$$$$$$ | $$   /$$  /$$$$$$  /$$    /$$ /$$$$$$$  /$$| $$   /$$
-| $$$$$$$/ /$$__  $$| $$  /$$/ /$$__  $$|  $$  /$$/| $$__  $$| $$| $$  /$$/
-| $$__  $$| $$  \ $$| $$$$$$/ | $$  \ $$ \  $$/$$/ | $$  \ $$| $$| $$$$$$/ 
-| $$  \ $$| $$  | $$| $$_  $$ | $$  | $$  \  $$$/  | $$  | $$| $$| $$_  $$ 
-| $$  | $$|  $$$$$$/| $$ \  $$|  $$$$$$/   \  $/   | $$  | $$| $$| $$ \  $$
-|__/  |__/ \______/ |__/  \__/ \______/     \_/    |__/  |__/|__/|__/  \__/
-                                                                           
-</pre>
-
+<div class="container no-padding">
+    <div class="row background-img vmiddle"></div>
+      <div class="text-center">
 <h1>Seznam izpitov</h1>
 <ul>
     % for predmet in rokovnik.predmeti:
-    <li><b>{{predmet.ime}}</b></li>
+    <b>{{predmet.ime}}</b>
 
         <form action='/odstrani-predmet/' method='POST' type='hidden'>
         <input type='hidden' name='predmet' value='{{predmet.ime}}'>
@@ -23,14 +14,13 @@
         </form>
 
         <br>
-        
         <ul>
             % for izpit in predmet.izpiti:
-            <li>Datum: {{izpit.datum}}</li>
-            <li>Dolžina izpita: {{izpit.dolzina_izpita}} minut</li>
-            <li>Tematika: {{izpit.tematika}}</li>
-            <li>Količina gradiva: {{izpit.kolicina_gradiva}} strani</li>
-            <li>Že predelano gradivo: {{izpit.predelano_gradivo}} strani</li>
+            Datum: {{izpit.datum}}<br>
+            Dolžina izpita: {{izpit.dolzina_izpita}} minut<br>
+            Tematika: {{izpit.tematika}}<br>
+            Količina gradiva: {{izpit.kolicina_gradiva}} strani<br>
+            Že predelano gradivo: {{izpit.predelano_gradivo}} strani<br>
             <form action='/odstrani-izpit/' method='POST' type='hidden'>
             <input type='hidden' name='predmet' value='{{predmet.ime}}'>
             <input type='hidden' name='izpit' value='{{izpit.datum}}'>
@@ -59,8 +49,13 @@
         <br>
     % end
 </ul>
+        </div>
+    </div>
+</div>
 
-
+<div class="container no-padding">
+    <div class="row background-img vmiddle">
+      <div class="col-12 text-center">
 <b>Dodaj nov predmet:</b>
 <form action='/dodaj-predmet/' method='POST'>
     Ime predmeta: <input type='text' name='ime'>
@@ -68,16 +63,6 @@
     Težavnost: <input type='text' name='tezavnost'>
     <input type='submit' class="btn-primary" value='Dodaj predmet'>
 </form>
-
-<br>
-
-<script>
-    function skrij(id) {
-      var x = document.getElementById(id);
-      if (x.style.display === 'none') {
-        x.style.display = 'block';
-      } else {
-        x.style.display = 'none';
-      }
-    }
-</script>
+        </div>
+    </div>
+</div>

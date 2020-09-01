@@ -55,6 +55,7 @@ class Rokovnik:
         self.izpiti_po_prioriteti.sort(key=lambda x: x[1])
 
     def razporedi_delo_enakomerno(self):
+        self.razporeditev_dela = {}
         ostanek_dela = {}
         for izpit, _ in self.izpiti_po_prioriteti:
             celotno_delo1 = self.enakomerna_razporeditev(izpit, self.kolicina_dela_na_dan(izpit), self.izpiti_po_pricakovanem_delu[izpit])
@@ -221,5 +222,31 @@ class Izpit:
         return self.datum > other.datum
 
 
-
+class Racun:
+    def __init__(self, ime, geslo, rokovnik):
+        self.ime = ime
+        self.geslo = geslo
+        self.rokovnik = rokovnik
+    
+    def avtentikacija_gesla(self, geslo):
+        if self.geslo != geslo:
+            raise ValueError('Vnešeno geslo je napačno!')
+    
+    def shrani_stanje(self, dat):
+        stanje = {
+            'ime': self.ime,
+            'geslo': self.geslo,
+            'rokovnik': self.rokovnik.slovar_s_stanjem(),
+        }
+        with open(dat, 'w', encoding='UTF-8') as d:
+            json.dump(stanje, d, ensure_ascii=False, indent=4)
+    
+    @classmethod
+    def nalozi_stanje(cls, dat):
+        with open(dat, encoding='UTF-8') as d:
+            stanje = json.load(d)
+        ime = stanje['ime']
+        geslo = stanje['geslo']
+        rokovnik = Rokovnik.nalozi_iz_slovarja(stanje['rokovnik'])
+        return cls(ime, geslo, rokovnik)
     

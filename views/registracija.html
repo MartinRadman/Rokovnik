@@ -1,0 +1,24 @@
+% rebase('prijava_registracija.html')
+
+<br>
+<br>
+
+<div class="container h-100 d-flex justify-content-center">
+    <h1>REGISTRACIJA</h1>
+</div>
+
+
+<div class="container h-100 d-flex justify-content-center">
+    <form action='/registracija/' method='POST'>
+        Ime: <input type='text' name='ime'>
+        Geslo: <input type='password' name='geslo'>
+        Pričakovana količina dela na dan (v minutah): <input type='text' name='delo_na_dan'>
+        <input type='submit' class="btn-primary" value='Registriraj se'>
+    </form>
+</div>
+
+<br>
+
+<div class="container h-100 d-flex justify-content-center">
+<a href="/prijava/" class="btn btn-info" role="button">Že imate račun? Kliknite tukaj, da se prijavite.</a>
+</div>
