@@ -4,7 +4,6 @@
     <div class="row background-img vmiddle"></div>
       <div class="text-center">
 <h1>Seznam izpitov</h1>
-<ul>
     % for predmet in rokovnik.predmeti:
     <b>{{predmet.ime}}</b>
 
@@ -14,7 +13,6 @@
         </form>
 
         <br>
-        <ul>
             % for izpit in predmet.izpiti:
             Datum: {{izpit.datum}}<br>
             Dolžina izpita: {{izpit.dolzina_izpita}} minut<br>
@@ -45,13 +43,13 @@
                     </form>
                 </div>
             </div>
-        </ul>
         <br>
     % end
-</ul>
         </div>
     </div>
 </div>
+
+<br>
 
 <div class="container no-padding">
     <div class="row background-img vmiddle">
@@ -59,8 +57,8 @@
 <b>Dodaj nov predmet:</b>
 <form action='/dodaj-predmet/' method='POST'>
     Ime predmeta: <input type='text' name='ime'>
-    Pričakovana ocena: <input type='text' name='pricakovana_ocena'>
-    Težavnost: <input type='text' name='tezavnost'>
+    Pričakovana ocena (od 5 do 10): <input type='text' name='pricakovana_ocena'><br><br>
+    Težavnost (od 1 (najlažje) do 10 (najtežje)): <input type='text' name='tezavnost'>
     <input type='submit' class="btn-primary" value='Dodaj predmet'>
 </form>
         </div>
