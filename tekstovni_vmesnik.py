@@ -213,7 +213,7 @@ def prikazi_ucni_nacrt(rokovnik):
     dolzina = do_kdaj_hoces_podatke()
     ostanek = rokovnik.razporedi_delo_enakomerno()
     for datum in rokovnik.razporeditev_dela:
-        if (datetime.datetime.strptime(datum, '%m/%d/%y') - datetime.datetime.now()).days > dolzina:
+        if (datetime.datetime.strptime(datum, '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).days > dolzina:
             continue
         kaj_prikazano = True
         print(datum)

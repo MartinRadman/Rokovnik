@@ -6,6 +6,21 @@
 <h1>Seznam izpitov</h1>
     % for predmet in rokovnik.predmeti:
     <b>{{predmet.ime}}</b>
+        <br>
+        <a class="btn btn-info" data-toggle="collapse" href="#{{predmet.ime}}-uredi" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Uredi predmet
+        </a>
+        <div class="collapse" id="{{predmet.ime}}-uredi">
+            <div class="card card-body">
+                <form action='/uredi-predmet/' method='POST' type='hidden'>
+                <input type='hidden' name='predmet' value='{{predmet.ime}}'>
+                Ime: <input type='text' name='ime' value='{{predmet.ime}}' required>
+                Pričakovana ocena (od 5 do 10): <input type='text' name='pricakovana_ocena' value='{{predmet.pricakovana_ocena}}' required><br><br>
+                Težavnost (od 1 (najlažje) do 10 (najtežje)): <input type='text' name='tezavnost' value='{{predmet.tezavnost}}' required>
+                <input type='submit' value='Uredi predmet'>
+                </form>
+            </div>
+        </div>
 
         <form action='/odstrani-predmet/' method='POST' type='hidden'>
         <input type='hidden' name='predmet' value='{{predmet.ime}}'>
@@ -19,11 +34,35 @@
             Tematika: {{izpit.tematika}}<br>
             Količina gradiva: {{izpit.kolicina_gradiva}} strani<br>
             Že predelano gradivo: {{izpit.predelano_gradivo}} strani<br>
+            
+            
+            <a class="btn btn-outline-info" data-toggle="collapse" href="#{{predmet.ime}}{{predmet.izpiti.index(izpit)}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                Uredi izpit
+            </a>
+            <div class="collapse" id="{{predmet.ime}}{{predmet.izpiti.index(izpit)}}">
+                <div class="card card-body">
+                    <form action='/uredi-izpit/' method='POST' type='hidden'>
+                    <input type='hidden' name='predmet' value='{{predmet.ime}}'>
+                    <input type='hidden' name='index' value='{{predmet.izpiti.index(izpit)}}'>
+                    <label for='datum'>Datum:</label>
+                    <input type='date' id='datum' name='datum'>
+                    Ura: <input type='text' id='ura' name='ura'>
+                    Minuta: <input type='text' id='minuta' name='minuta'>
+                    Dolžina izpita (v minutah): <input type='text' name='dolzina_izpita' value='{{izpit.dolzina_izpita}}' required>
+                    Tematika: <input type='text' name='tematika' value='{{izpit.tematika}}' required>
+                    Količina gradiva (št. strani): <input type='text' name='kolicina_gradiva' value='{{izpit.kolicina_gradiva}}' required>
+                    Že predelano gradivo (št. strani): <input type='text' name='predelano_gradivo' value='{{izpit.predelano_gradivo}}' required>
+                    <input type='submit' value='Uredi izpit'>
+                    </form>
+                </div>
+            </div>
+
             <form action='/odstrani-izpit/' method='POST' type='hidden'>
             <input type='hidden' name='predmet' value='{{predmet.ime}}'>
             <input type='hidden' name='izpit' value='{{izpit.datum}}'>
             <input type='submit' class="btn btn-outline-danger" value='Odstrani izpit'>
             </form>
+
             <br>
             <br>
             % end
@@ -64,3 +103,10 @@
         </div>
     </div>
 </div>
+
+
+<script>
+$('#dob').datepicker('setDate', new Date(2006, 11, 24));
+$('#dob').datepicker('update');
+$('#dob').val('');
+</script>

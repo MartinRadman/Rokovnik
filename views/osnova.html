@@ -4,6 +4,9 @@
         <title>Rokovnik</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+        <meta http-equiv="Pragma" content="no-cache"/>
+        <meta http-equiv="Expires" content="0"/>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     </head>
     <body>
@@ -21,6 +24,17 @@
                 <li class="nav-item active">
                   <a class="nav-link" href="/napoved/">Načrt dela</a>
                 </li>
+                <a class="btn" data-toggle="collapse" href="#rokovnik-uredi" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  Uredi rokovnik
+              </a>
+                <div class="collapse" id="rokovnik-uredi">
+                  <div class="card card-body">
+                      <form action='/uredi-rokovnik/' method='POST' type='hidden'>
+                      Količina dela na dan (v minutah): <input type='text' name='delo_na_dan' value='{{rokovnik.delo_na_dan}}' required>
+                      <input type='submit' value='Uredi rokovnik'>
+                      </form>
+                  </div>
+                </div>
                 <form class="form-inline my-2 my-lg-0" method="POST" action="/odjava/"> 
                     <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Odjava</button>
                 </form>

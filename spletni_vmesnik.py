@@ -88,12 +88,15 @@ def dodaj_izpit():
     rokovnik = rokovnik_uporabnika()
     predmet = rokovnik.poisci_predmet_glede_na_ime(bottle.request.forms.getunicode('predmet'))
     datum = bottle.request.forms.getunicode('datum')
-    datum = datetime.datetime.strptime(datum, '%Y-%m-%d')
+    ura = int(bottle.request.forms.getunicode('ura'))
+    minuta = int(bottle.request.forms.getunicode('minuta'))
+    datum = datetime.datetime.strptime(datum + f' {ura}:{minuta}', '%Y-%m-%d %H:%M')
     dolzina_izpita = bottle.request.forms.getunicode('dolzina_izpita')
     tematika = bottle.request.forms.getunicode('tematika')
     kolicina_gradiva = bottle.request.forms.getunicode('kolicina_gradiva')
     predelano_gradivo = bottle.request.forms.getunicode('predelano_gradivo')
     predmet.dodaj_izpit(datum, int(dolzina_izpita), tematika, int(kolicina_gradiva), int(predelano_gradivo))
+    rokovnik.razporedi_delo_enakomerno()
     shrani_rokovnik()
     bottle.redirect('/')
 
@@ -102,6 +105,20 @@ def odstrani_predmet():
     rokovnik = rokovnik_uporabnika()
     predmet = rokovnik.poisci_predmet_glede_na_ime(bottle.request.forms.getunicode('predmet'))
     rokovnik.odstrani_predmet(predmet)
+    rokovnik.razporedi_delo_enakomerno()
+    shrani_rokovnik()
+    bottle.redirect('/')
+
+@bottle.post('/uredi-predmet/')
+def dodaj_predmet():
+    rokovnik = rokovnik_uporabnika()
+    predmet = rokovnik.poisci_predmet_glede_na_ime(bottle.request.forms.getunicode('predmet'))
+    ime = bottle.request.forms.getunicode('ime')
+    pricakovana_ocena = int(bottle.request.forms.getunicode('pricakovana_ocena'))
+    tezavnost = int(bottle.request.forms.getunicode('tezavnost'))
+    predmet.ime = ime
+    predmet.pricakovana_ocena = pricakovana_ocena
+    predmet.tezavnost = tezavnost
     shrani_rokovnik()
     bottle.redirect('/')
 
@@ -112,8 +129,42 @@ def odstrani_izpit():
     datum = datetime.datetime.strptime(bottle.request.forms.getunicode('izpit'), '%Y-%m-%d %H:%M:%S')
     izpit = predmet.najdi_izpit_glede_na_cas(datum)
     predmet.odstrani_izpit(izpit)
+    rokovnik.razporedi_delo_enakomerno()
     shrani_rokovnik()
     bottle.redirect('/')
+
+@bottle.post('/uredi-izpit/')
+def uredi_izpit():
+    rokovnik = rokovnik_uporabnika()
+    predmet = rokovnik.poisci_predmet_glede_na_ime(bottle.request.forms.getunicode('predmet'))
+    izpit = predmet.izpiti[int(bottle.request.forms.getunicode('index'))]
+    datum = bottle.request.forms.getunicode('datum')
+    ura = int(bottle.request.forms.getunicode('ura'))
+    minuta = int(bottle.request.forms.getunicode('minuta'))
+    datum = datetime.datetime.strptime(datum + f' {ura}:{minuta}', '%Y-%m-%d %H:%M')
+    dolzina_izpita = int(bottle.request.forms.getunicode('dolzina_izpita'))
+    tematika = bottle.request.forms.getunicode('tematika')
+    kolicina_gradiva = int(bottle.request.forms.getunicode('kolicina_gradiva'))
+    predelano_gradivo = int(bottle.request.forms.getunicode('predelano_gradivo'))
+    izpit.datum = datum
+    izpit.dolzina_izpita = dolzina_izpita
+    izpit.tematika = tematika
+    izpit.kolicina_gradiva = kolicina_gradiva
+    izpit.predelano_gradivo = predelano_gradivo
+    izpit.predmet = predmet
+    rokovnik.razporedi_delo_enakomerno()
+    shrani_rokovnik()
+    bottle.redirect('/')
+
+@bottle.post('/uredi-rokovnik/')
+def uredi_rokovnik():
+    rokovnik = rokovnik_uporabnika()
+    delo_na_dan = int(bottle.request.forms.getunicode('delo_na_dan'))
+    rokovnik.delo_na_dan = delo_na_dan
+    shrani_rokovnik()
+    bottle.redirect('/')
+
+
 
 @bottle.get('/napoved/')
 def napoved():

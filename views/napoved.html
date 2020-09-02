@@ -29,3 +29,9 @@
         % end
     </tbody>
   </table>
+
+% ostanek = rokovnik.razporedi_delo_enakomerno()
+% if ostanek:
+% for izpit in ostanek:
+<p>Žal vam za izpit pri predmetu {{izpit.predmet.ime}}, ki bo izveden {{izpit.datum}} zmanjka {{ostanek[izpit]}} minut dela.</p>
+% end

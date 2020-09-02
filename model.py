@@ -71,7 +71,7 @@ class Rokovnik:
         for razpolozljivi_dan in self.razpolozljivi_dnevi(izpit):
                 if celotno_delo <= 0:
                     break
-                dan = razpolozljivi_dan.strftime("%x")
+                dan = self.dan_v_datumu(razpolozljivi_dan)
                 zasedeno = self.preveri_koliko_je_dela_na_dan(dan)
                 na_razpolagi = self.delo_na_dan - zasedeno
                 dodeljeno_delo = math.ceil(min(na_razpolagi, delo_na_dan))
@@ -81,6 +81,11 @@ class Rokovnik:
                     self.razporeditev_dela[dan] = {**self.razporeditev_dela.get(dan, {}), **{izpit: dodeljeno_delo}}
                 celotno_delo -= dodeljeno_delo
         return celotno_delo
+
+    @staticmethod
+    def dan_v_datumu(datum):
+        dan, _ = str(datum).split(' ')
+        return dan
 
     @staticmethod
     def razpolozljivi_dnevi(izpit):
@@ -172,7 +177,7 @@ class Predmet:
         self.razvrsti_izpite(izpit)
 
     def razvrsti_izpite(self, izpit):
-        dan = izpit.datum.strftime("%x")
+        dan = self.rokovnik.dan_v_datumu(izpit.datum)
         self.izpiti_po_datumih[dan] = self.izpiti_po_datumih.get(dan, []) + [izpit]
         self.rokovnik.izpiti_po_datumih[dan] = self.rokovnik.izpiti_po_datumih.get(dan, []) + [izpit]
         self.rokovnik.oceni_pricakovano_delo(izpit)
@@ -182,14 +187,14 @@ class Predmet:
         self.rokovnik.oceni_pricakovano_delo(izpit)
 
     def odstrani_izpit(self, izpit):
-        dan = izpit.datum.strftime("%x")
+        dan = self.rokovnik.dan_v_datumu(izpit.datum)
         self.izpiti_po_datumih[dan].remove(izpit)
         self.izpiti.remove(izpit)
         self.rokovnik.izpiti_po_datumih[dan].remove(izpit)
         self.rokovnik.izpiti.remove(izpit)
 
     def preveri_datum(self, datum, dolzina_izpita):
-        dan = datum.strftime("%x")    
+        dan = self.rokovnik.dan_v_datumu(datum)    
         if dan in self.izpiti_po_datumih:
             for izpit in self.izpiti_po_datumih[dan]:
                 dolzina_izpita2 = izpit.dolzina_izpita
@@ -216,7 +221,7 @@ class Izpit:
         self.ime = f'Izpit pri predmetu {self.predmet}, ki bo izveden {self.datum}'
 
     def __str__(self):
-        return f'\033[92m{self.predmet}\033[0m Izpit bo bil izveden {self.datum} in bo trajal {self.dolzina_izpita} minut. Opis: {self.tematika}'
+        return f'\033[92m{self.predmet}\033[0m Izpit bo izveden {self.datum} in bo trajal {self.dolzina_izpita} minut. Opis: {self.tematika}'
 
     def __gt__(self, other):
         return self.datum > other.datum
