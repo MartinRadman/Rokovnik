@@ -110,7 +110,7 @@ def odstrani_predmet():
     bottle.redirect('/')
 
 @bottle.post('/uredi-predmet/')
-def dodaj_predmet():
+def uredi_predmet():
     rokovnik = rokovnik_uporabnika()
     predmet = rokovnik.poisci_predmet_glede_na_ime(bottle.request.forms.getunicode('predmet'))
     ime = bottle.request.forms.getunicode('ime')
