@@ -8,7 +8,7 @@ Program je spletni rokovnik. Vanj vnašate svoje predmete in izpite, program pa 
 
 ## Navodila za uporabo
 
-Najprej prenesite vse datoteke na svoj računalnik, nato zaženite ali spletni_vmesnik.py ali tekstovni_vmesnik.py. Sledite navodilom v terminalu. Za prikaz spletnega vmesnika pojdite na IP naslov, ki bo prikazan v terminalu.
+Najprej prenesite vse datoteke na svoj računalnik, nato zaženite ali spletni_vmesnik.py ali tekstovni_vmesnik.py. Sledite navodilom na terminalu. Za prikaz spletnega vmesnika pojdite na IP naslov, ki bo prikazan na terminalu.
 
 ## Opombe in načrt za prihodnost
 
